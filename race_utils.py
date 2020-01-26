@@ -101,6 +101,31 @@ class RaceProcessor(object):
     else:
       return tokenization.convert_to_unicode(text)
 
+  def get_example(self, example_id, article, question, options, answer):
+    label = ord(answer) - ord("A")
+    qa_list = []
+
+    context = self.process_text(article)
+    question = self.process_text(question)
+    for j in range(4):
+      option = self.process_text(options[j])
+
+      if "_" in question:
+        qa_cat = question.replace("_", option)
+      else:
+        qa_cat = " ".join([question, option])
+
+      qa_list.append(qa_cat)
+    example = InputExample(
+        example_id=example_id,
+        context_sentence=context,
+        start_ending=None,
+        endings=[qa_list[0], qa_list[1], qa_list[2], qa_list[3]],
+        label=label
+    )
+
+    return example
+    
   def read_examples(self, data_dir):
     """Read examples from RACE json files."""
     examples = []
