@@ -6,7 +6,7 @@ bertqwert
 
 ## start CTPU
 ```
-ctpu up -tf-version=1.15 -tpu-size=v3.8
+ctpu up -tf-version=1.15 -tpu-size=v3-8
 ```
 * We need tf == 1.15.0 and memory > 8 G
 * See: https://cloud.google.com/tpu/pricing
@@ -60,8 +60,11 @@ gsutil cp gs://bertqwert/dataset/albert_xxlarge_v2.tar.gz . &&  tar xvf albert_x
 gsutil cp -r albert_xxlarge_v2 gs://bertqwert
 
 # Notes: don't delet the folder albert_xxlarge_v2 because the file: ./albert_xxlarge/30k-clean.model is required by local.
-
 ```
+gsutil cp gs://bertqwert/dataset/albert_xxlarge/30k-clean.model ./albert_xxlarge/30k-clean.model
+```
+
+* The trained model cannot be used by other cpu, gpu and other tpu device (config), you only can do prediction on the same tpu environment (that is ridiculous). Someone proposes this solution with `estimator = tf.contrib.tpu.TPUEstimator(..., export_to_tpu=False)` at https://github.com/tensorflow/tensorflow/issues/25652. But it didn't work for me.
 
 ## run 
 * When running under tpu mode, make sure all input, model and out folder/files in gs.
